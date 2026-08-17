@@ -22,6 +22,7 @@
 #' @importFrom tidyr fill
 #' @importFrom zoo rollapplyr
 #' @importFrom stringr str_to_lower str_length
+#' @importFrom rlang !!
 #' @importFrom gt gt fmt_number fmt_percent cols_hide cols_label tab_header tab_spanner tab_style cell_text cells_body cell_fill tab_source_note gtsave
 #' @importFrom gtExtras gt_plt_sparkline
 #' @examples
@@ -56,7 +57,7 @@ generate_ces_report <- function(
 ) {
 
   # 1. Argument Code Checks
-  if (!is.character(area_code) | stringr::str_length(area_code) != 5) {
+  if (!is.character(area_code) || stringr::str_length(area_code) != 5) {
     stop("area_code must be a character string with length 5. '", area_code, "' is not valid.")
   }
 

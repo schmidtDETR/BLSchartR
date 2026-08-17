@@ -1,7 +1,7 @@
 Package: BLSchartR
 Type: Package
 Title: Data Visualizations Utilizing BLSloadR
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person(
       "David", "Schmidt",
@@ -11,7 +11,25 @@ Authors@R: c(
   )
 Description: The BLSloadR package contains procedures to access data from the U.S. Bureau of Labor Statistics.
     This package uses that data structure to produce various data visualizations of BLS data.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: 
+    R (>= 4.1.0)
+Imports: 
+    BLSloadR,
+    dplyr,
+    ggplot2,
+    gt,
+    gtExtras,
+    lubridate,
+    purrr,
+    rlang,
+    scales,
+    stringr,
+    tidyr,
+    treemapify,
+    zoo
 RoxygenNote: 7.3.3
+URL: https://github.com/schmidtDETR/BLSchartR
+BugReports: https://github.com/schmidtDETR/BLSchartR/issues
