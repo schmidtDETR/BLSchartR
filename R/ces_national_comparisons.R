@@ -361,7 +361,7 @@ ces_wage_hour_comparisons <- function(out_dir, target_fips = "32", ces_data = NU
 #'
 #' @import ggplot2
 #' @importFrom dplyr filter mutate group_by ungroup select rename left_join pull if_else case_when summarize n
-#' @importFrom lubridate - years
+#' @importFrom lubridate years
 #' @export
 ces_growth_trends <- function(out_dir, target_fips = "32", ces_data = NULL) {
 
