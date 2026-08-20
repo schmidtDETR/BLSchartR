@@ -452,20 +452,35 @@ ces_growth_trends <- function(out_dir, target_fips = "32", ces_data = NULL) {
     # Safely truncate long industry names for Windows OS
     safe_ind <- base::strtrim(gsub("[^A-Za-z0-9 _-]", "", ind), 45)
 
-    # Categorical Bar Charts
     p2 <- joined_values |>
       dplyr::filter(industry_name == ind) |>
       ggplot(aes(x = growth_category, y = employment, fill = better_worse)) +
+
+      # Background shading (updated with alpha = 0.1)
+      annotate("rect", xmin = -Inf, xmax = 3.5, ymin = -Inf, ymax = Inf,
+               fill = "white", alpha = 0.2) +
+      annotate("rect", xmin = 3.5, xmax = Inf, ymin = -Inf, ymax = Inf,
+               fill = "grey", alpha = 0.2) +
+
+      # UPDATE: Add the overarching group labels at the top
+      annotate("text", x = 2, y = Inf, label = "Was Growing...",
+               vjust = 1.5, size = 4.5, fontface = "italic") +
+      annotate("text", x = 5, y = Inf, label = "Was Shrinking...",
+               vjust = 1.5, size = 4.5, fontface = "italic") +
+
       geom_col(position = "dodge") +
-      # UPDATE: aes(label = label_text) applies the asterisk dynamically
       geom_text(aes(label = label_text), vjust = -0.5, size = 3.5, fontface = "bold") +
       facet_wrap(~period_name) +
-      labs(title = paste0("Growth Trends for ", ind, " in ", current_period),
-           # UPDATE: Subtitle explains the asterisk
-           subtitle = paste0("Comparison to same period in prior years using annual growth rate (* = ", target_state_name, ")"),
+      labs(title = paste0("National Job Growth Trends in ", ind, " in ", current_period),
+           subtitle = paste0("Number of states per category, comparison to same month in prior years using annual growth rate (* includes ", target_state_name, ")"),
            y = "Total Employment", x = NULL) +
       scale_fill_manual(values = c("darkgreen", "firebrick3")) +
-      scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
+      scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.20))) +
+
+      # UPDATE: Dynamically truncate the x-axis labels
+      # This regex removes "Was Growing" or "Was Shrinking" and any following spaces or newlines
+      scale_x_discrete(labels = function(x) gsub("^(Was Growing|Was Shrinking)[ \n]*", "...", x)) +
+
       theme_bw() +
       guides(fill = "none") +
       theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5))
