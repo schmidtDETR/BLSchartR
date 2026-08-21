@@ -50,7 +50,8 @@ generate_ces_from_qcew <- function(qcew_area_code, year_start) {
   sm_industry <- BLSloadR::fread_bls("https://download.bls.gov/pub/time.series/sm/sm.industry")$data
   ce_industry <- BLSloadR::fread_bls("https://download.bls.gov/pub/time.series/ce/ce.industry")$data
 
-  ce_in_sm <- ce_industry |>
+  ce_in_sm <- sm_industry |>
+    left_join(ce_industry |> select(industry_code, naics_code)) |>
     filter(industry_code %in% sm_industry$industry_code) |>
     mutate(parsed_codes = map(naics_code, parse_naics))
 
@@ -101,16 +102,16 @@ generate_ces_from_qcew <- function(qcew_area_code, year_start) {
     list(filter_expr = exprs(industry_code == '10', own_code %in% 3:4), series_name = "Local government"),
 
     # --- 5. DETAILED GOVERNMENT SUB-SECTORS ---
-    list(filter_expr = exprs(industry_code == '622', own_code == 1), series_name = "Federal hospitals"),
+    list(filter_expr = exprs(industry_code == '622', own_code == 1), series_name = "Federal government hospitals"),
     list(filter_expr = exprs(industry_code == '928110', own_code == 1), series_name = "Department of Defense"),
     list(filter_expr = exprs(str_starts(industry_code, '491'), own_code == 1), series_name = "U.S. Postal Service"),
-    list(filter_expr = exprs(industry_code == '61', own_code == 2), series_name = "State government education"),
-    list(filter_expr = exprs(industry_code == '622', own_code == 2), series_name = "State hospitals"),
-    list(filter_expr = exprs(str_length(industry_code) == 2, !industry_code %in% c('10', '61'), own_code == 2), series_name = "State government, excluding education"),
-    list(filter_expr = exprs(industry_code == '61', own_code %in% 3:4), series_name = "Local government education"),
-    list(filter_expr = exprs(industry_code %in% c('48', '49', '48-49'), own_code %in% 3:4), series_name = "Local government transportation"),
-    list(filter_expr = exprs(industry_code == '622', own_code %in% 3:4), series_name = "Local hospitals"),
-    list(filter_expr = exprs(str_length(industry_code) == 2, !industry_code %in% c('10', '61'), own_code %in% 3:4), series_name = "Local government, excluding education")
+    list(filter_expr = exprs(industry_code == '61', own_code == 2), series_name = "State government educational services"),
+    list(filter_expr = exprs(industry_code == '622', own_code == 2), series_name = "State government hospitals"),
+    list(filter_expr = exprs(str_length(industry_code) == 2, !industry_code %in% c('10', '61'), own_code == 2), series_name = "State government excluding education"),
+    list(filter_expr = exprs(industry_code == '61', own_code %in% 3:4), series_name = "Local government educational services"),
+    list(filter_expr = exprs(industry_code %in% c('48', '49', '48-49'), own_code %in% 3:4), series_name = "Local government transportation"), #Note: National series only
+    list(filter_expr = exprs(industry_code == '622', own_code %in% 3:4), series_name = "Local government hospitals"),
+    list(filter_expr = exprs(str_length(industry_code) == 2, !industry_code %in% c('10', '61'), own_code %in% 3:4), series_name = "Local government excluding educational services")
   )
 
   # Combine the dynamic and manual filters
